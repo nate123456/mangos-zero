@@ -1086,7 +1086,7 @@ bool ChatHandler::HandleLearnAllRecipesCommand(char* args)
         if (!Utf8FitTo(name, wnamepart))
         {
             loc = 0;
-            for (; loc < MAX_LOCALE; ++loc)
+            for (; loc < MAX_DBC_LOCALE; ++loc)
             {
                 if (loc == GetSessionDbcLocale())
                 {
@@ -1106,7 +1106,7 @@ bool ChatHandler::HandleLearnAllRecipesCommand(char* args)
             }
         }
 
-        if (loc < MAX_LOCALE)
+        if (loc < MAX_DBC_LOCALE)
         {
             targetSkillInfo = skillInfo;
             break;

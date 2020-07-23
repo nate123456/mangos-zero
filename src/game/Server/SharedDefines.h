@@ -2608,4 +2608,7 @@ enum WhisperLoggingLevels
     WHISPER_LOGGING_EVERYTHING = 2
 };
 
+#define MANGOSBOT_ZERO
+#define MANGOS
+
 #endif
