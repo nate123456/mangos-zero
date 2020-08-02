@@ -109,7 +109,6 @@ void PlayerbotHolder::AddPlayerBot(uint64 playerGuid, uint32 masterAccount)
         delete holder;                                      // delete all unprocessed queries
         return;
      }
-
      CharacterDatabase.DelayQueryHolder(this, &PlayerbotHolder::HandlePlayerBotLoginCallback, holder);
 }
 
@@ -125,7 +124,7 @@ void PlayerbotHolder::HandlePlayerBotLoginCallback(QueryResult * dummy, SqlQuery
      uint32 botAccountId = lqh->GetAccountId();
      WorldSession *botSession = new WorldSession(botAccountId, NULL, SEC_PLAYER,
 #ifndef MANGOSBOT_ZERO
-        1,
+        2,
 #endif
         0, LOCALE_enUS);
 
@@ -223,45 +222,27 @@ class CharacterHandler
         {
             if (!holder) return;
 
-            if (WorldSession* session = sWorld.FindSession(((LoginQueryHolder*)holder)->GetAccountId()))
-                session->HandlePlayerLogin((LoginQueryHolder*)holder);
+            WorldSession* session = sWorld.FindSession(((LoginQueryHolder*)holder)->GetAccountId());
+                if (!session)
+                {
+                    delete holder;
+                    return;
+                }
 #ifdef ENABLE_PLAYERBOTS
             ObjectGuid guid = ((LoginQueryHolder*)holder)->GetGuid();
+#endif
+            session->HandlePlayerLogin((LoginQueryHolder*)holder);
+#ifdef ENABLE_PLAYERBOTS
             Player* player = sObjectMgr.GetPlayer(guid, true);
             if (player && !player->GetPlayerbotAI())
             {
                 player->SetPlayerbotMgr(new PlayerbotMgr(player));
                 player->GetPlayerbotMgr()->OnPlayerLogin(player);
+                sRandomPlayerbotMgr.OnPlayerLogin(player);
             }
-            sRandomPlayerbotMgr.OnPlayerLogin(player);
 #endif
         }
 } chrHandler;
-
-/*#indef ENABLE_PLAYERBOTS
-void PlayerbotHolder::AddPlayerBot(uint64 playerGuid, uint32 masterAccountId)
-{
-    // has bot already been added?
-    if (sObjectMgr.GetPlayer(ObjectGuid(playerGuid)))
-    {
-        return;
-    }
-
-    uint32 accountId = sObjectMgr.GetPlayerAccountIdByGUID(ObjectGuid(playerGuid));
-    if (accountId == 0)
-    {
-        return;
-    }
-
-    PlayerbotLoginQueryHolder *holder = new PlayerbotLoginQueryHolder(this, masterAccountId, accountId, ObjectGuid(playerGuid));
-    if (!holder->Initialize())
-    {
-        delete holder;                                      // delete all unprocessed queries
-        return;
-    }
-    CharacterDatabase.DelayQueryHolder(&chrHandler, &CharacterHandler::HandlePlayerBotLoginCallback, holder);
-}
-#endif*/
 
 void WorldSession::HandleCharEnum(QueryResult* result)
 {
@@ -809,15 +790,8 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     SqlStatement stmt = CharacterDatabase.CreateStatement(updChars, "UPDATE `characters` SET `online` = 1 WHERE `guid` = ?");
     stmt.PExecute(pCurrChar->GetGUIDLow());
 
-#ifdef ENABLE_PLAYERBOTS
-    if (pCurrChar->GetSession()->GetRemoteAddress() != "bot")
-    {
-#endif
-        stmt = LoginDatabase.CreateStatement(updAccount, "UPDATE `account` SET `active_realm_id` = ? WHERE `id` = ?");
-        stmt.PExecute(realmID, GetAccountId());
-#ifdef ENABLE_PLAYERBOTS
-    }
-#endif
+    stmt = LoginDatabase.CreateStatement(updAccount, "UPDATE `account` SET `active_realm_id` = ? WHERE `id` = ?");
+    stmt.PExecute(realmID, GetAccountId());
 
     /* Sync player's in-game time with server time */
     pCurrChar->SetInGameTime(WorldTimer::getMSTime());
