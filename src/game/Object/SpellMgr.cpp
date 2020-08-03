@@ -3329,21 +3329,24 @@ SpellEntry const* SpellMgr::SelectAuraRankForLevel(SpellEntry const* spellInfo, 
         return spellInfo;
     }
 
-    for (uint32 nextSpellId = spellInfo->Id; nextSpellId != 0; nextSpellId = GetPrevSpellInChain(nextSpellId))
+    if (sWorld.getConfig(CONFIG_BOOL_AUTO_DOWNRANK))
     {
-        SpellEntry const* nextSpellInfo = sSpellStore.LookupEntry(nextSpellId);
-        if (!nextSpellInfo)
+        for (uint32 nextSpellId = spellInfo->Id; nextSpellId != 0; nextSpellId = GetPrevSpellInChain(nextSpellId))
         {
-            break;
-        }
+            SpellEntry const* nextSpellInfo = sSpellStore.LookupEntry(nextSpellId);
+            if (!nextSpellInfo)
+            {
+                break;
+            }
 
-        // if found appropriate level
-        if (level + 10 >= nextSpellInfo->spellLevel)
-        {
-            return nextSpellInfo;
-        }
+            // if found appropriate level
+            if (level + 10 >= nextSpellInfo->spellLevel)
+            {
+                return nextSpellInfo;
+            }
 
-        // one rank less then
+            // one rank less then
+        }
     }
 
     // not found
