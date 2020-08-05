@@ -34,6 +34,7 @@
 #include "ScriptMgr.h"
 #include "Totem.h"
 #include "SpellAuras.h"
+#include "World.h"
 
 void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 {
@@ -351,13 +352,16 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
     recvPacket >> targets.ReadForCaster(_player);
 
-    // auto-selection buff level base at target level (in spellInfo)
-    if (Unit* target = targets.getUnitTarget())
+    if (sWorld.getConfig(CONFIG_BOOL_AUTO_DOWNRANK))
     {
-        // if rank not found then function return NULL but in explicit cast case original spell can be casted and later failed with appropriate error message
-        if (SpellEntry const* actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(spellInfo, target->getLevel()))
+        // auto-selection buff level base at target level (in spellInfo)
+        if (Unit* target = targets.getUnitTarget())
         {
-            spellInfo = actualSpellInfo;
+            // if rank not found then function return NULL but in explicit cast case original spell can be casted and later failed with appropriate error message
+            if (SpellEntry const* actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(spellInfo, target->getLevel()))
+            {
+                spellInfo = actualSpellInfo;
+            }
         }
     }
 
