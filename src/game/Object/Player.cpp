@@ -14662,7 +14662,9 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver,
     }
 
     bool handled = false;
-
+#ifdef ENABLE_PLAYERBOTS
+    if (this != questGiver) {
+#endif
     switch (questGiver->GetTypeId())
     {
         case TYPEID_UNIT:
@@ -14674,6 +14676,7 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver,
     }
     // don't start quest script during randomization
 #ifdef ENABLE_PLAYERBOTS
+    }
     if (this != questGiver && !handled && pQuest->GetQuestCompleteScript() != 0)
 #else
     if (!handled && pQuest->GetQuestCompleteScript() != 0)
