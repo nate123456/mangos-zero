@@ -11,9 +11,6 @@ git:
 branches:
   only:
     - master
-# send notifications to stack as well as email
-notifications:
-  slack: getmangos:yRgNBSgRQVh8WdfGEbT08Hit
 
 # build on both Linux and OSX
 os:
