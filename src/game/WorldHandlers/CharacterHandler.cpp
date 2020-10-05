@@ -462,7 +462,9 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recv_data)
     }
 
     if ((have_same_race && skipCinematics == CINEMATICS_SKIP_SAME_RACE) || skipCinematics == CINEMATICS_SKIP_ALL)
-        { pNewChar->setCinematic(1); }                          // not show intro
+    {
+        pNewChar->setCinematic(1);                           // not show intro
+    }
 
     pNewChar->SetAtLoginFlag(AT_LOGIN_FIRST);               // First login
 
@@ -859,7 +861,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     // Used by Eluna
 #ifdef ENABLE_ELUNA
     if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST))
+    {
         sEluna->OnFirstLogin(pCurrChar);
+    }
 #endif /* ENABLE_ELUNA */
 
 

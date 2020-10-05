@@ -919,7 +919,9 @@ bool ChatHandler::HasLowerSecurityAccount(WorldSession* target, uint32 target_ac
         target_sec = sAccountMgr.GetSecurity(target_account);
     }
     else
-        { return true; }                                        // caller must report error for (target==NULL && target_account==0)
+    {
+        return true;                                         // caller must report error for (target==NULL && target_account==0)
+    }
 
     if (GetAccessLevel() < target_sec || (strong && GetAccessLevel() <= target_sec))
     {
@@ -977,7 +979,9 @@ void ChatHandler::SendSysMessage(const char* str)
         // m_session == null when we're accessing these command from the console.
         ObjectGuid senderGuid;
         if (m_session)
+        {
             senderGuid = m_session->GetPlayer()->GetObjectGuid();
+        }
 
         ChatHandler::BuildChatPacket(data, CHAT_MSG_SYSTEM, line, LANG_UNIVERSAL, CHAT_TAG_NONE, senderGuid);
         m_session->SendPacket(&data);
@@ -1222,7 +1226,9 @@ ChatCommandSearchResult ChatHandler::FindCommand(ChatCommand* table, char const*
                     // command not found directly in child command list, return child command list owner
                     command = &table[i];
                     if (parentCommand)
-                        { *parentCommand = NULL; }              // we don't known parent of table list at this point
+                    {
+                        *parentCommand = NULL;               // we don't known parent of table list at this point
+                    }
 
                     text = oldchildtext;                    // restore text to stated just after parse found parent command
                     return CHAT_COMMAND_UNKNOWN_SUBCOMMAND; // we not found subcommand for table[i]
@@ -2085,7 +2091,9 @@ bool ChatHandler::isValidChatMessage(const char* message)
                                 int8 dbIndex = sObjectMgr.GetIndexForLocale(LocaleConstant(i));
                                 if (dbIndex == -1 || il == NULL || (size_t)dbIndex >= il->Name.size())
                                     // using strange database/client combinations can lead to this case
-                                    { expectedName = linkedItem->Name1; }
+                                {
+                                    expectedName = linkedItem->Name1;
+                                }
                                 else
                                 {
                                     expectedName = il->Name[dbIndex];
@@ -2190,7 +2198,9 @@ void ChatHandler::SkipWhiteSpaces(char** args)
     }
 
     while (isWhiteSpace(**args))
-        { ++(*args); }
+    {
+        ++(*args);
+    }
 }
 
 /**
@@ -2216,7 +2226,9 @@ bool  ChatHandler::ExtractInt32(char** args, int32& val)
         *(tail++) = '\0';
     }
     else if (tail && *tail)                                 // some not whitespace symbol
-        { return false; }                                       // args not modified and can be re-parsed
+    {
+        return false;                                        // args not modified and can be re-parsed
+    }
 
     if (valRaw < std::numeric_limits<int32>::min() || valRaw > std::numeric_limits<int32>::max())
     {
@@ -2272,7 +2284,9 @@ bool  ChatHandler::ExtractUInt32Base(char** args, uint32& val, uint32 base)
         *(tail++) = '\0';
     }
     else if (tail && *tail)                                 // some not whitespace symbol
-        { return false; }                                       // args not modified and can be re-parsed
+    {
+        return false;                                        // args not modified and can be re-parsed
+    }
 
     if (valRaw > std::numeric_limits<uint32>::max())
     {
@@ -2329,7 +2343,9 @@ bool  ChatHandler::ExtractFloat(char** args, float& val)
         *(tail++) = '\0';
     }
     else if (tail && *tail)                                 // some not whitespace symbol
-        { return false; }                                       // args not modified and can be re-parsed
+    {
+        return false;                                        // args not modified and can be re-parsed
+    }
 
     // value successfully extracted
     val = float(valRaw);
@@ -2399,7 +2415,9 @@ char* ChatHandler::ExtractLiteralArg(char** args, char const* lit /*= NULL*/)
 
         int largs = 0;
         while (head[largs] && !isWhiteSpace(head[largs]))
-            { ++largs; }
+        {
+            ++largs;
+        }
 
         if (largs < l)
         {
@@ -2478,7 +2496,9 @@ char* ChatHandler::ExtractQuotedArg(char** args, bool asis /*= false*/)
     char* head = asis ? *args : tail;                       // start arg
 
     while (*tail && *tail != guard)
-        { ++tail; }
+    {
+        ++tail;
+    }
 
     if (!*tail || (tail[1] && !isWhiteSpace(tail[1])))      // fail
     {
@@ -2604,7 +2624,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     if (*tail != 'H')                                       // skip color part, some links can not have color part
     {
         while (*tail && *tail != '|')
-            { ++tail; }
+        {
+            ++tail;
+        }
 
         if (!*tail)
         {
@@ -2634,7 +2656,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
             int l = strlen(linkTypes[linktype_idx]);
             if (strncmp(tail, linkTypes[linktype_idx], l) == 0 &&
                 (tail[l] == ':' || tail[l] == '|'))
-                { break; }
+            {
+                break;
+            }
         }
 
         // is search fail?
@@ -2655,7 +2679,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     else
     {
         while (*tail && *tail != ':')                       // skip linktype string
-            { ++tail; }
+        {
+            ++tail;
+        }
 
         if (!*tail)
         {
@@ -2669,7 +2695,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     char* keyStart = tail;                                  // remember key start for return
 
     while (*tail && *tail != '|' && *tail != ':')
-        { ++tail; }
+    {
+        ++tail;
+    }
 
     if (!*tail)
     {
@@ -2691,7 +2719,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
         // something|h[name]|h|r or something:something2...|h[name]|h|r
 
         while (*tail && *tail != '|' && *tail != ':')
-            { ++tail; }
+        {
+            ++tail;
+        }
 
         if (!*tail)
         {
@@ -2704,7 +2734,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     // |h[name]|h|r or :something2...|h[name]|h|r
 
     while (*tail && (*tail != '|' || *(tail + 1) != 'h'))   // skip ... part if exist
-        { ++tail; }
+    {
+        ++tail;
+    }
 
     if (!*tail)
     {
@@ -2722,7 +2754,9 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     }
 
     while (*tail && (*tail != ']' || *(tail + 1) != '|'))   // skip name part
-        { ++tail; }
+    {
+        ++tail;
+    }
 
     tail += 2;                                              // skip ]|
 
@@ -2874,7 +2908,9 @@ char* ChatHandler::ExtractKeyFromLink(char** text, char const* const* linkTypes,
     if (arg)
     {
         if (found_idx)
-            { *found_idx = -1; }                                // special index case
+        {
+            *found_idx = -1;                                 // special index case
+        }
 
         return arg;
     }
