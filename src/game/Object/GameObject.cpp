@@ -419,10 +419,10 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                     }
 
                     // cannot use more than trap charges
-                    if (m_useTimes >= goInfo->GetCharges())
+                    /*if (m_useTimes >= goInfo->GetCharges())
                     {
                         return;
-                    }
+                    }*/
 
                     // FIXME: this is activation radius (in different casting radius that must be selected from spell data)
                     // TODO: move activated state code (cast itself) to GO_ACTIVATED, in this place only check activating and set state

@@ -810,7 +810,7 @@ void BattleGround::EndBattleGround(Team winner)
 
         SqlStatement stmt = CharacterDatabase.CreateStatement(insPvPstatsBattleground, "INSERT INTO `pvpstats_battlegrounds` (`id`, `winner_team`, `bracket_id`, `type`, `date`) VALUES (?, ?, ?, ?, NOW())");
 
-        uint8 battleground_bracket = GetMinLevel() / 10;
+        uint8 battleground_bracket = (uint8)(GetBracketId() + 1);
         uint8 battleground_type = (uint8)GetTypeID();
 
         // query next id
