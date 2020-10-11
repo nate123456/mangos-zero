@@ -1,0 +1,36 @@
+version: "2.4"
+services:
+  mangosd:
+    image: ghcr.io/nate123456/spp-mangosd-master-amd64:latest
+    depends_on:
+      - mysqldb
+    restart: always
+    ports:
+      - "8085:8085"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./conf:/mangos/conf
+
+  realmd:
+    image: ghcr.io/nate123456/spp-realmd-master-amd64:latest
+    depends_on:
+      - mysqldb
+    restart: always
+    ports:
+      - "3724:3724"
+    volumes:
+      - ./conf:/mangos/conf
+
+  mysqldb:
+    image: mariadb
+    restart: always
+    environment:
+      - MYSQL_USER=mangos
+      - MYSQL_PASSWORD=mangos
+      - MYSQL_ROOT_PASSWORD=mangos
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/var/lib/mysql
