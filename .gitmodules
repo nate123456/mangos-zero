@@ -1,6 +1,6 @@
 [submodule "dep"]
 	path = dep
-	url = https://github.com/mangos/mangosDeps
+	url = https://github.com/nate123456/mangosDeps
 [submodule "src/realmd"]
 	path = src/realmd
 	url = https://github.com/mangos/realmd
